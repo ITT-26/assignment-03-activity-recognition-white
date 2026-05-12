@@ -19,6 +19,9 @@ ACTIVITIES = ['running', 'rowing', 'lifting', 'jumpingjacks']
 RATES_HZ = [20, 100]
 PLACEMENTS = ['hand', 'pocket']
 UI_UPDATE_RATE_HZ = 30
+START_DELAY_SEC = 10.0
+BETWEEN_RECORD_DELAY_SEC = 5.0
+AUTO_RECORD_LOOPS = 5
 
 sensor = SensorUDP(PORT)
 win = window.Window(WINDOW_WIDTH, WINDOW_HEIGHT, caption="Data Gatherer")
@@ -131,15 +134,15 @@ def stop_recording():
     if is_auto_record:
         auto_record_count += 1
         
-        if auto_record_count >= 10:
-            # Stop auto-recording after 10 loops
+        if auto_record_count >= AUTO_RECORD_LOOPS:
+            # Stop auto-recording after AUTO_RECORD_LOOPS loops
             is_auto_record = False
             auto_record_count = 0
             is_waiting = False
         else:
             is_waiting = True
             wait_start_time = time.time()
-            wait_duration = 5.0
+            wait_duration = BETWEEN_RECORD_DELAY_SEC
 
 
 last_btn3 = 0
@@ -150,7 +153,7 @@ def btn3_press(data):
     if val == 1 and last_btn3 == 0 and not is_recording and not is_waiting:
         is_waiting = True
         wait_start_time = time.time()
-        wait_duration = 20.0
+        wait_duration = START_DELAY_SEC
         auto_record_count = 0
     last_btn3 = val
 
