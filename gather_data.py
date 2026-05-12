@@ -36,12 +36,18 @@ cur_placement_idx = 0
 # 4) State
 recording_requested = False
 is_recording = False
+is_auto_record = False
 is_aborted = False
 record_start_time = 0
 data_rows = []
 
+is_waiting = False
+wait_start_time = 0
+wait_duration = 0
+auto_record_count = 0
+
 # Selected config parameter to modify
-# 0 = Activity, 1 = Sample Rate, 2 = Placement
+# 0 = Activity, 1 = Sample Rate, 2 = Placement, 3 = Auto Record
 tgt_config = 0
 
 # Pyglet texts
@@ -57,13 +63,13 @@ def btn1_press(data):
     global last_btn1, tgt_config
     val = int(data)
     if val == 1 and last_btn1 == 0 and not is_recording:
-        tgt_config = (tgt_config + 1) % 3
+        tgt_config = (tgt_config + 1) % 4
     last_btn1 = val
 
 last_btn2 = 0
 def btn2_press(data):
     """Change the currently selected setting's value.(ai generated feature)"""
-    global last_btn2, cur_activity_idx, cur_rate_idx, cur_placement_idx
+    global last_btn2, cur_activity_idx, cur_rate_idx, cur_placement_idx, is_auto_record
     val = int(data)
     if val == 1 and last_btn2 == 0 and not is_recording:
         if tgt_config == 0:
@@ -72,9 +78,11 @@ def btn2_press(data):
             cur_rate_idx = (cur_rate_idx + 1) % len(RATES_HZ)
         elif tgt_config == 2:
             cur_placement_idx = (cur_placement_idx + 1) % len(PLACEMENTS)
+        elif tgt_config == 3:
+            is_auto_record = not is_auto_record
     last_btn2 = val
 
-def start_recording():
+def start_recording(dt=None):
     global is_recording, record_start_time, data_rows, is_aborted
     is_recording = True
     is_aborted = False
@@ -86,7 +94,7 @@ def start_recording():
     clock.schedule_interval(sample_sensor, 1.0 / freq)
     
 def stop_recording():
-    global is_recording
+    global is_recording, is_auto_record, is_waiting, wait_start_time, wait_duration, auto_record_count
     if not is_recording: return
     is_recording = False
     
@@ -120,23 +128,43 @@ def stop_recording():
         writer.writerow(["id", "timestamp", "acc_x", "acc_y", "acc_z", "gyro_x", "gyro_y", "gyro_z"])
         writer.writerows(data_rows)
 
+    if is_auto_record:
+        auto_record_count += 1
+        
+        if auto_record_count >= 10:
+            # Stop auto-recording after 10 loops
+            is_auto_record = False
+            auto_record_count = 0
+            is_waiting = False
+        else:
+            is_waiting = True
+            wait_start_time = time.time()
+            wait_duration = 5.0
+
+
 last_btn3 = 0
 def btn3_press(data):
     """Start recording."""
-    global last_btn3, recording_requested
+    global last_btn3, recording_requested, is_waiting, wait_start_time, wait_duration, auto_record_count
     val = int(data)
-    if val == 1 and last_btn3 == 0 and not is_recording:
-        recording_requested = True
+    if val == 1 and last_btn3 == 0 and not is_recording and not is_waiting:
+        is_waiting = True
+        wait_start_time = time.time()
+        wait_duration = 20.0
+        auto_record_count = 0
     last_btn3 = val
 
 last_btn4 = 0
 def btn4_press(data):
     """Stop recording manually."""
-    global last_btn4, recording_requested, is_aborted
+    global last_btn4, recording_requested, is_aborted, is_waiting
     val = int(data)
-    if val == 1 and last_btn4 == 0 and is_recording:
-        is_aborted = True
-        recording_requested = False
+    if val == 1 and last_btn4 == 0:
+        if is_recording:
+            is_aborted = True
+            recording_requested = False
+        elif is_waiting:
+            is_waiting = False
     last_btn4 = val
 
 sensor.register_callback('button_1', btn1_press)
@@ -168,26 +196,37 @@ def sample_sensor(dt):
     ])
 
 def update_ui(dt): #(ai generated feature)
-    global is_recording, recording_requested
+    global is_recording, recording_requested, is_waiting
     
+    if is_waiting:
+        elapsed_wait = time.time() - wait_start_time
+        if elapsed_wait >= wait_duration:
+            is_waiting = False
+            recording_requested = True
+
     # Check if a state change was requested by the background thread
     if recording_requested and not is_recording:
         start_recording()
     elif not recording_requested and is_recording:
         stop_recording()
-    lbl_status.text = f"Status: {'RECORDING' if is_recording else 'IDLE'}"
-    if is_recording:
-        elapsed = time.time() - record_start_time
-        lbl_status.text += f" ({elapsed:.1f}/{RECORD_TIME_SEC} s)"
+        
+    if is_waiting:
+        rem = max(0, wait_duration - (time.time() - wait_start_time))
+        lbl_status.text = f"Status: WAITING ({rem:.1f} s)"
+    else:
+        lbl_status.text = f"Status: {'RECORDING' if is_recording else 'IDLE'}"
+        if is_recording:
+            elapsed = time.time() - record_start_time
+            lbl_status.text += f" ({elapsed:.1f}/{RECORD_TIME_SEC} s)"
     
     c_act = ACTIVITIES[cur_activity_idx]
     c_rate = RATES_HZ[cur_rate_idx]
     c_pos = PLACEMENTS[cur_placement_idx]
     
-    sel = [" ", " ", " "]
+    sel = [" ", " ", " ", " "]
     sel[tgt_config] = ">"
     
-    lbl_config.text = f"{sel[0]} Activity: {c_act} | {sel[1]} Rate: {c_rate}Hz | {sel[2]} Position: {c_pos}"
+    lbl_config.text = f"{sel[0]} Activity: {c_act} | {sel[1]} Rate: {c_rate}Hz | {sel[2]} Position: {c_pos} | {sel[3]} Auto: {is_auto_record}"
 
     # show realtime sensor values
     acc = sensor.get_value('accelerometer')
