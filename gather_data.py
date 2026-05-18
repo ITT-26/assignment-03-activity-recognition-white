@@ -9,12 +9,15 @@ from pyglet import clock
 from datetime import datetime
 from DIPPID import SensorUDP
 
+# records accelerometer and gyroscope data from DIPPID
+# saves activity recordings as csv files
+
 # Constants
 PORT = 5700
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 600
 RECORD_TIME_SEC = 10.0
-STUDENT_NAME = "Daniel"
+STUDENT_NAME = "Viet-Hang-Thu"
 ACTIVITIES = ['running', 'rowing', 'lifting', 'jumpingjacks']
 RATES_HZ = [20, 100]
 PLACEMENTS = ['hand', 'pocket']
