@@ -1,2 +1,7 @@
+numpy==2.2.6
+pandas==2.3.3
 pyglet==2.1.14
 pyserial==3.5
+scikit_learn==1.7.2
+matplotlib==3.10.12
+
