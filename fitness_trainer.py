@@ -58,4 +58,14 @@ def on_draw():
 
 clock.schedule_interval(update, 1 / 20.0)
 if __name__ == "__main__":
-    pyglet.app.run()
+    try:
+        pyglet.app.run()
+    except Exception:
+        pass
+    finally:
+        try:
+            sensor.disconnect()
+        except ValueError:
+            pass
+        window.close()
+        print(" ...Fitness Trainer exited.")
