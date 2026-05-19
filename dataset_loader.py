@@ -4,7 +4,7 @@ import pandas as pd
 # loads all csv recordings from the dataset folders
 # prepares recordings for classifier training
 
-def load_dataset(folder):
+def load_dataset(folder, target_freq=None):
     data = []
     labels = []
 
@@ -28,6 +28,10 @@ def load_dataset(folder):
                 continue
 
             activity = parts[1]
+            frequency = parts[2]
+            
+            if target_freq and frequency != target_freq:
+                continue
 
             data.append(frame)
             labels.append(activity)
