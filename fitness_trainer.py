@@ -21,6 +21,8 @@ window = Window(
     caption="Fitness Trainer"
 )
 
+pyglet.gl.glClearColor(0.92, 0.92, 0.92, 1) # light gray background
+
 
 recognizer = activity.ActivityRecognizer()
 recognizer.train()
