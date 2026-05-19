@@ -46,7 +46,7 @@ Main application.
 This file:
 
 * trains the classifier at startup
-* receives real-time DIPPID sensor data
+* receives real-time DIPPID sensor data 
 * continuously predicts activities
 * updates the pyglet UI
 
@@ -54,29 +54,41 @@ This file:
 
 Used to compare different kernel functions and evaluate classifier performance.
 
+## Pre-processing and Feature Extraction
+
+Raw sensor values resulted in unstable predictions due to temporal noise and alignment jitter. To solve this, we tested calculating summary statistics over the time window.
+
+Extracting statistical features vastly improved prediction stability and realtime consistency over the raw sequential data. The raw sequences peaked around `~67.42%` accuracy, while our expanded statistical matrices reached `~83.82%`.
+
 ## Classifier Evaluation
 
-Different SVM kernels were tested:
+Different variations of sampling rates (20Hz, 100Hz, Mixed), SVM kernels (linear, poly, rbf, sigmoid), sensor inclusions (accelerometer only, gyroscope only, both), and input features (raw, mean only, mean & std, and all stats) were thoroughly tested.
 
-```text id="6d40v6"
-linear 0.76
-poly   0.63
-rbf    0.73
-```
+### 1. Frequencies and Sensor Combinations
+We evaluated whether higher sampling rates or including both gyroscope and accelerometer data improved results.
+![](eval_img/comprehensive_frequencies.png)
 
-The linear kernel achieved the best overall accuracy and was selected for the final application.
+Surprisingly, the **Mixed** dataset (using both 20Hz and 100Hz simultaneously) performed the best, acting as a form of data augmentation. Using **both** accelerometer and gyroscope sensors yielded significantly higher accuracy than using either alone.
 
-The polynomial kernel appeared to overfit the training data and produced the lowest accuracy.
+### 2. Feature Modes vs. Kernel Performance
+We evaluated incrementally adding statistical properties vs the kernel type. 
+![](eval_img/comprehensive_features_kernels.png)
 
-## Pre-processing
+Adding all four summary statistics (mean, std, max, min) significantly outperformed using mean values alone.
 
-Raw sensor values resulted in unstable predictions because of noisy motion data.
+### 3. Exhaustive "All vs All" Benchmark
+Every possible hyperparameter combination (108 total tests) was calculated and ranked:
+![](eval_img/all_vs_all_comparison.png)
 
-Extracting statistical features improved:
+The best overall setup leverages a **linear** kernel on a **Mixed** frequency dataset using **all** features from **both** sensors. 
 
-* prediction stability
-* overall accuracy
-* realtime prediction consistency
+## Advanced Diagnostics
+
+To generalize hyperparameter behaviors, we generated boxplots and heatmaps of our data pipeline distribution.
+
+![](eval_img/distribution_by_sensor.png)
+![](eval_img/distribution_by_kernel.png)
+![](eval_img/heatmap_sensors_features.png)
 
 ## Realtime Prediction
 
