@@ -77,7 +77,7 @@ We evaluated incrementally adding statistical properties vs the kernel type.
 Adding all four summary statistics (mean, std, max, min) significantly outperformed using mean values alone.
 
 ### 3. Exhaustive "All vs All" Benchmark
-Every possible hyperparameter combination (108 total tests) was calculated and ranked:
+Every possible hyperparameter combination (144 total tests) was calculated and ranked:
 ![](eval_img/all_vs_all_comparison.png)
 
 The best overall setup leverages a **linear** kernel on a **Mixed** frequency dataset using **all** features from **both** sensors. 
