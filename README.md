@@ -58,7 +58,7 @@ Used to compare different kernel functions and evaluate classifier performance.
 
 Raw sensor values resulted in unstable predictions due to temporal noise and alignment jitter. To solve this, we tested calculating summary statistics over the time window.
 
-Extracting statistical features vastly improved prediction stability and realtime consistency over the raw sequential data. The raw sequences peaked around `~67.42%` accuracy, while our expanded statistical matrices reached `~83.82%`.
+Extracting statistical features vastly improved prediction stability and realtime consistency over the raw sequential data. The raw sequences peaked around `~69.36%` accuracy, while our expanded statistical matrices reached `~83.24%`.
 
 ## Classifier Evaluation
 
