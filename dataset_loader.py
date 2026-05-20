@@ -9,8 +9,9 @@ def load_dataset(folder, target_freq=None):
     labels = []
 
     for root, dirs, files in os.walk(folder):
-
-        for filename in files:
+        dirs.sort()
+        
+        for filename in sorted(files):
 
             if not filename.endswith(".csv"):
                 continue

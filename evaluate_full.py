@@ -40,7 +40,7 @@ def run_comprehensive_evaluation():
                 )
                 
                 for kernel in kernels:
-                    model = make_pipeline(StandardScaler(), SVC(kernel=kernel))
+                    model = make_pipeline(StandardScaler(), SVC(kernel=kernel, random_state=42))
                     model.fit(X_train, y_train)
                     acc = accuracy_score(y_test, model.predict(X_test))
                     

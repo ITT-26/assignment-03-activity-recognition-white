@@ -37,10 +37,10 @@ class ActivityRecognizer:
         )
 
         # after comparing different kernels,
-        # rbf gave the most stable results for our data
+        # linear gave the most stable results for our data
         self.model = make_pipeline(
             StandardScaler(),
-            SVC(kernel="linear")
+            SVC(kernel="linear", random_state=42)
         )
 
         self.model.fit(X_train, y_train)
