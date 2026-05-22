@@ -1,13 +1,13 @@
-# Team White (13.5/20P)
+# Team White (15.5/20P)
 
-## Gathering Training Data (4.5/6P)
+## Gathering Training Data (5/6P)
 
 * ok, nice GUI even if not neccessary!
 * Had to change my name in the code (-0.5P)
-* DON'T COMMIT ALL THE TRAINING FILES, WE HAVE A SHARED REPO FOR THAT. I DO NOT HAVE UNLIMITED SPACE ON MY LAPTOP AND ALSO I DO NOT HAVE TIME TO WAIT TIL ALL THE DATA IS CLONED FOR EACH REPOSITORY...sorry for raising my voice but almost all of you did that *crying* (-1P)
+* DON'T COMMIT ALL THE TRAINING FILES, WE HAVE A SHARED REPO FOR THAT. I DO NOT HAVE UNLIMITED SPACE ON MY LAPTOP AND ALSO I DO NOT HAVE TIME TO WAIT TIL ALL THE DATA IS CLONED FOR EACH REPOSITORY...sorry for raising my voice but almost all of you did that *crying* (-0.5P)
 
 
-## Activity Recognition (9/14P)
+## Activity Recognition (10.5/14P)
 
 #### Evaluation
 
@@ -18,12 +18,10 @@
 
 #### Fitness Trainer
 
-* had to search in the files for the path to the data (-1P)
+* had to search in the files for the path to the data because it was hard coded. Also, incompatible with shared repo which results in weird challenges in the fitness trainer app (jumpingjacks and jumping_jacks, "Hang" as an activity, ...) (-0.5P)
 * training on start and predicting continuously works fine
 * activity recognition works most of the time but randomly returns activities when doing nothing (-1P)
 * images are not displayed within the window...again, the AI generated stuff was obviously not tested (-0.5P)
-* what is the difference between jumpingjacks and jumping_jacks? As a sports amateur, I do not know (-0.5P)
-* what is the activity "Hang"? Again, as a sports amateur, I do not know (-0.5P)
 * there is no one who tells me what to do or for how long :o (-0.5P)
 
 
